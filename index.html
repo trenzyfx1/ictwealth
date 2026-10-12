@@ -34,8 +34,9 @@
   }
   .orange-btn:active{transform:scale(.985);filter:brightness(.95)}
 
+  /* ✅ Welcome screen login button — sits just below the write-up */
   #s-welcome{background:#002856}
-  #s-welcome .orange-btn{top:calc(1380*var(--u))}
+  #s-welcome .orange-btn{top:calc(1180*var(--u))}
 
   #s-login{background:#fff}
   .back{
@@ -87,7 +88,7 @@
     position:absolute;right:calc(63*var(--u));top:calc(1086*var(--u));background:none;border:0;cursor:pointer;
     font:400 calc(40*var(--u))/calc(52*var(--u)) 'Dosis',sans-serif;color:#e87200;text-decoration:underline;text-underline-offset:calc(4*var(--u));
   }
-  #s-login .orange-btn{top:calc(1188*var(--u))}
+  #s-login .orange-btn{top:calc(1100*var(--u))}
   .msg{position:absolute;left:calc(40*var(--u));width:calc(748*var(--u));top:calc(1310*var(--u));text-align:center;font:500 calc(30*var(--u))/1.3 'Dosis',sans-serif;color:#c0392b;min-height:calc(40*var(--u))}
 
   /* ✅ Small toast popup */
@@ -124,7 +125,7 @@
   </section>
 
   <section class="screen" id="s-welcome">
-    <img class="bg" src="images/welcome.jpg" alt="Invest with confidence. Begin today." draggable="false">
+    <img class="bg" src="images/welcome.png" alt="Invest with confidence. Begin today." draggable="false">
     <button class="orange-btn" id="goLogin" type="button">Login</button>
   </section>
 
@@ -206,7 +207,7 @@ function showToast(msg){
   toastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
 }
 
-/* ✅ FIXED: fill the FULL mobile width — no more side bars */
+/* ✅ Fill the FULL mobile width */
 let fitW = 0;
 function fitApp(){
   const w = innerWidth;

